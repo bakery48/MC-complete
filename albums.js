@@ -318,8 +318,8 @@ const ALBUMS = [
     ]
   },
   {
-    id: "reflection-chord",
-    title: "REFLECTION {Chord}",
+    id: "reflection-naked",
+    title: "REFLECTION {Naked}",
     year: 2015,
     color: "#2E4057",
     itunesSearch: "Mr. Children REFLECTION",
@@ -346,9 +346,7 @@ const ALBUMS = [
       "遠くへと",
       "I wanna be there",
       "Starting Over",
-      "産声",
-      "未完",
-      "幸福の条件（Happy Ending ver.）"
+      "未完"
     ]
   },
   {
@@ -409,6 +407,28 @@ const ALBUMS = [
       "黄昏と積み木",
       "deja-vu",
       "おはよう"
+    ]
+  },
+  {
+    id: "ubugoe",
+    title: "産声",
+    year: 2026,
+    color: "#5D4E8A",
+    itunesSearch: "Mr. Children 産声 2026",
+    tracks: [
+      "キングスネークの憂鬱",
+      "Again",
+      "Saturday",
+      "ウスバカゲロウ",
+      "Glastonbury",
+      "禁断の実",
+      "平熱",
+      "空也上人",
+      "Stupid hero",
+      "Nowhere Man ～喝采が聞こえる",
+      "産声",
+      "Umbrella",
+      "家族"
     ]
   }
 ];
