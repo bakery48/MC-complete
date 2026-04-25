@@ -318,8 +318,8 @@ const ALBUMS = [
     ]
   },
   {
-    id: "reflection-naked",
-    title: "REFLECTION {Naked}",
+    id: "reflection-chord",
+    title: "REFLECTION {Chord}",
     year: 2015,
     color: "#2E4057",
     itunesSearch: "Mr. Children REFLECTION",
@@ -346,7 +346,9 @@ const ALBUMS = [
       "遠くへと",
       "I wanna be there",
       "Starting Over",
-      "未完"
+      "産声",
+      "未完",
+      "幸福の条件（Happy Ending ver.）"
     ]
   },
   {
