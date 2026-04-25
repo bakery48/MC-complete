@@ -1,9 +1,5 @@
-// Mr. Children (ミスターチルドレン) Complete Studio Album Discography
-// Compiled for karaoke tracking website
-// Note: Album artwork not available due to copyright — use placeholder colored images.
-//
-// CORRECTION NOTE: The user's list named album #17 as "重力と息吹 (2017)".
-// The actual title is "重力と呼吸" and was released on October 3, 2018, not 2017.
+// Mr. Children (ミスターチルドレン) 全スタジオアルバム曲目データ
+// アルバムアートワークは著作権の都合上、代表色のプレースホルダーを使用
 
 const ALBUMS = [
   {
@@ -12,7 +8,6 @@ const ALBUMS = [
     titleJa: "Everything",
     year: 1992,
     color: "#4A90D9",
-    artwork: "artwork not available",
     tracks: [
       "ロード・アイ・ミス・ユー",
       "Mr.Shining Moon",
@@ -29,7 +24,6 @@ const ALBUMS = [
     titleJa: "Kind of Love",
     year: 1992,
     color: "#E8A0BF",
-    artwork: "artwork not available",
     tracks: [
       "虹の彼方へ",
       "All by myself",
@@ -50,7 +44,6 @@ const ALBUMS = [
     titleJa: "Versus",
     year: 1993,
     color: "#2C3E50",
-    artwork: "artwork not available",
     tracks: [
       "Another Mind",
       "メインストリートに行こう",
@@ -70,7 +63,6 @@ const ALBUMS = [
     titleJa: "Atomic Heart",
     year: 1994,
     color: "#E74C3C",
-    artwork: "artwork not available",
     tracks: [
       "Printing",
       "Dance Dance Dance",
@@ -92,7 +84,6 @@ const ALBUMS = [
     titleJa: "深海",
     year: 1996,
     color: "#1A5276",
-    artwork: "artwork not available",
     tracks: [
       "Dive",
       "シーラカンス",
@@ -116,7 +107,6 @@ const ALBUMS = [
     titleJa: "bolero",
     year: 1997,
     color: "#8E44AD",
-    artwork: "artwork not available",
     tracks: [
       "Prologue",
       "Everything (It's you)",
@@ -138,7 +128,6 @@ const ALBUMS = [
     titleJa: "Discovery",
     year: 1999,
     color: "#27AE60",
-    artwork: "artwork not available",
     tracks: [
       "DISCOVERY",
       "光の射す方へ",
@@ -159,7 +148,6 @@ const ALBUMS = [
     titleJa: "Q",
     year: 2000,
     color: "#F39C12",
-    artwork: "artwork not available",
     tracks: [
       "CENTER OF UNIVERSE",
       "その向こうへ行こう",
@@ -182,7 +170,6 @@ const ALBUMS = [
     titleJa: "It's a Wonderful World",
     year: 2002,
     color: "#16A085",
-    artwork: "artwork not available",
     tracks: [
       "overture",
       "蘇生",
@@ -207,7 +194,6 @@ const ALBUMS = [
     titleJa: "シフクノオト",
     year: 2004,
     color: "#D4AC0D",
-    artwork: "artwork not available",
     tracks: [
       "言わせてみてぇもんだ",
       "PADDLE",
@@ -229,7 +215,6 @@ const ALBUMS = [
     titleJa: "I ♥ U",
     year: 2005,
     color: "#C0392B",
-    artwork: "artwork not available",
     tracks: [
       "Worlds end",
       "Monster",
@@ -252,7 +237,6 @@ const ALBUMS = [
     titleJa: "HOME",
     year: 2007,
     color: "#6D4C41",
-    artwork: "artwork not available",
     tracks: [
       "叫び 祈り",
       "Wake me up!",
@@ -276,7 +260,6 @@ const ALBUMS = [
     titleJa: "SUPERMARKET FANTASY",
     year: 2008,
     color: "#E67E22",
-    artwork: "artwork not available",
     tracks: [
       "終末のコンフィデンスソング",
       "HANABI",
@@ -300,7 +283,6 @@ const ALBUMS = [
     titleJa: "SENSE",
     year: 2010,
     color: "#1F618D",
-    artwork: "artwork not available",
     tracks: [
       "I",
       "擬態",
@@ -322,7 +304,6 @@ const ALBUMS = [
     titleJa: "[(an imitation) blood orange]",
     year: 2012,
     color: "#E8450A",
-    artwork: "artwork not available",
     tracks: [
       "Hypnosis",
       "Marshmallow Day",
@@ -343,7 +324,6 @@ const ALBUMS = [
     titleJa: "REFLECTION {Naked}",
     year: 2015,
     color: "#2E4057",
-    artwork: "artwork not available",
     tracks: [
       "fantasy",
       "FIGHT CLUB",
@@ -374,11 +354,8 @@ const ALBUMS = [
     id: "juryoku-to-kokyu",
     title: "重力と呼吸",
     titleJa: "重力と呼吸",
-    // NOTE: The user's list says "重力と息吹 (2017)" — the correct title is
-    // "重力と呼吸" (Juuryoku to Kokyuu) released on October 3, 2018.
     year: 2018,
     color: "#566573",
-    artwork: "artwork not available",
     tracks: [
       "Your Song",
       "海にて、心は裸になりたがる",
@@ -398,7 +375,6 @@ const ALBUMS = [
     titleJa: "SOUNDTRACKS",
     year: 2020,
     color: "#1ABC9C",
-    artwork: "artwork not available",
     tracks: [
       "DANCING SHOES",
       "Brand new planet",
@@ -418,7 +394,6 @@ const ALBUMS = [
     titleJa: "miss you",
     year: 2023,
     color: "#7D6608",
-    artwork: "artwork not available",
     tracks: [
       "I MISS YOU",
       "Fifty's map ～おとなの地図",
@@ -437,7 +412,3 @@ const ALBUMS = [
   }
 ];
 
-// Helper: total track count across all albums
-const totalTracks = ALBUMS.reduce((sum, album) => sum + album.tracks.length, 0);
-
-module.exports = { ALBUMS, totalTracks };

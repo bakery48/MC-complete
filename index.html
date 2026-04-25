@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#1a1a2e" />
+  <title>Mr.Children 歌唱トラッカー</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ヘッダー -->
+  <header class="app-header">
+    <div class="header-title">
+      <span class="header-logo">🎤</span>
+      <div>
+        <h1>Mr.Children</h1>
+        <p class="header-sub">歌唱トラッカー</p>
+      </div>
+    </div>
+    <div class="header-progress">
+      <span id="progress-text">0 / 0</span>
+      <div class="progress-bar-wrap">
+        <div class="progress-bar-fill" id="progress-bar"></div>
+      </div>
+    </div>
+  </header>
+
+  <!-- タブナビ -->
+  <nav class="tab-nav">
+    <button class="tab-btn active" data-tab="album">アルバム別</button>
+    <button class="tab-btn" data-tab="kana">五十音順</button>
+  </nav>
+
+  <!-- コンテンツエリア -->
+  <main class="content">
+
+    <!-- アルバム別ビュー -->
+    <section id="view-album" class="view active">
+      <div id="album-list"></div>
+    </section>
+
+    <!-- 五十音順ビュー -->
+    <section id="view-kana" class="view">
+      <!-- 行ジャンプナビ -->
+      <div class="kana-jump-nav" id="kana-jump-nav"></div>
+      <div id="kana-list"></div>
+    </section>
+
+  </main>
+
+  <!-- フッター（エクスポート・インポート） -->
+  <footer class="app-footer">
+    <button class="footer-btn" id="btn-export">エクスポート</button>
+    <button class="footer-btn" id="btn-import">インポート</button>
+    <button class="footer-btn danger" id="btn-reset">リセット</button>
+    <input type="file" id="import-file-input" accept=".json" style="display:none" />
+  </footer>
+
+  <!-- モーダル（インポート確認） -->
+  <div class="modal-overlay" id="modal-overlay" hidden>
+    <div class="modal">
+      <p id="modal-message"></p>
+      <div class="modal-btns">
+        <button class="modal-btn" id="modal-cancel">キャンセル</button>
+        <button class="modal-btn primary" id="modal-confirm">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="albums.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
