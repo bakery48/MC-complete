@@ -178,12 +178,15 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 10px;
+  font-size: 9px;
   font-weight: 700;
-  color: rgba(255,255,255,0.8);
+  color: rgba(255,255,255,0.85);
   text-align: center;
   line-height: 1.2;
   letter-spacing: 0.03em;
+  background-size: cover;
+  background-position: center;
+  overflow: hidden;
 }
 
 .album-info {
@@ -377,10 +380,13 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 8px;
+  font-size: 7px;
   font-weight: 700;
-  color: rgba(255,255,255,0.8);
+  color: rgba(255,255,255,0.85);
   text-align: center;
+  background-size: cover;
+  background-position: center;
+  overflow: hidden;
 }
 
 .kana-track-info {

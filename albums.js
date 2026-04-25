@@ -1,13 +1,12 @@
 // Mr. Children (ミスターチルドレン) 全スタジオアルバム曲目データ
-// アルバムアートワークは著作権の都合上、代表色のプレースホルダーを使用
 
 const ALBUMS = [
   {
     id: "everything",
     title: "Everything",
-    titleJa: "Everything",
     year: 1992,
     color: "#4A90D9",
+    itunesSearch: "Mr. Children Everything",
     tracks: [
       "ロード・アイ・ミス・ユー",
       "Mr.Shining Moon",
@@ -21,9 +20,9 @@ const ALBUMS = [
   {
     id: "kind-of-love",
     title: "Kind of Love",
-    titleJa: "Kind of Love",
     year: 1992,
     color: "#E8A0BF",
+    itunesSearch: "Mr. Children Kind of Love",
     tracks: [
       "虹の彼方へ",
       "All by myself",
@@ -41,9 +40,9 @@ const ALBUMS = [
   {
     id: "versus",
     title: "Versus",
-    titleJa: "Versus",
     year: 1993,
     color: "#2C3E50",
+    itunesSearch: "Mr. Children Versus",
     tracks: [
       "Another Mind",
       "メインストリートに行こう",
@@ -60,9 +59,9 @@ const ALBUMS = [
   {
     id: "atomic-heart",
     title: "Atomic Heart",
-    titleJa: "Atomic Heart",
     year: 1994,
     color: "#E74C3C",
+    itunesSearch: "Mr. Children Atomic Heart",
     tracks: [
       "Printing",
       "Dance Dance Dance",
@@ -81,9 +80,9 @@ const ALBUMS = [
   {
     id: "shinkai",
     title: "深海",
-    titleJa: "深海",
     year: 1996,
     color: "#1A5276",
+    itunesSearch: "Mr. Children 深海",
     tracks: [
       "Dive",
       "シーラカンス",
@@ -104,9 +103,9 @@ const ALBUMS = [
   {
     id: "bolero",
     title: "bolero",
-    titleJa: "bolero",
     year: 1997,
     color: "#8E44AD",
+    itunesSearch: "Mr. Children bolero",
     tracks: [
       "Prologue",
       "Everything (It's you)",
@@ -125,9 +124,9 @@ const ALBUMS = [
   {
     id: "discovery",
     title: "Discovery",
-    titleJa: "Discovery",
     year: 1999,
     color: "#27AE60",
+    itunesSearch: "Mr. Children Discovery",
     tracks: [
       "DISCOVERY",
       "光の射す方へ",
@@ -145,9 +144,9 @@ const ALBUMS = [
   {
     id: "q",
     title: "Q",
-    titleJa: "Q",
     year: 2000,
     color: "#F39C12",
+    itunesSearch: "Mr. Children Q album",
     tracks: [
       "CENTER OF UNIVERSE",
       "その向こうへ行こう",
@@ -167,9 +166,9 @@ const ALBUMS = [
   {
     id: "its-a-wonderful-world",
     title: "It's a Wonderful World",
-    titleJa: "It's a Wonderful World",
     year: 2002,
     color: "#16A085",
+    itunesSearch: "Mr. Children It's a Wonderful World",
     tracks: [
       "overture",
       "蘇生",
@@ -191,9 +190,9 @@ const ALBUMS = [
   {
     id: "shifukunooto",
     title: "シフクノオト",
-    titleJa: "シフクノオト",
     year: 2004,
     color: "#D4AC0D",
+    itunesSearch: "Mr. Children シフクノオト",
     tracks: [
       "言わせてみてぇもんだ",
       "PADDLE",
@@ -212,9 +211,9 @@ const ALBUMS = [
   {
     id: "i-love-u",
     title: "I ♥ U",
-    titleJa: "I ♥ U",
     year: 2005,
     color: "#C0392B",
+    itunesSearch: "Mr. Children I Love U",
     tracks: [
       "Worlds end",
       "Monster",
@@ -234,9 +233,9 @@ const ALBUMS = [
   {
     id: "home",
     title: "HOME",
-    titleJa: "HOME",
     year: 2007,
     color: "#6D4C41",
+    itunesSearch: "Mr. Children HOME",
     tracks: [
       "叫び 祈り",
       "Wake me up!",
@@ -257,9 +256,9 @@ const ALBUMS = [
   {
     id: "supermarket-fantasy",
     title: "SUPERMARKET FANTASY",
-    titleJa: "SUPERMARKET FANTASY",
     year: 2008,
     color: "#E67E22",
+    itunesSearch: "Mr. Children SUPERMARKET FANTASY",
     tracks: [
       "終末のコンフィデンスソング",
       "HANABI",
@@ -280,9 +279,9 @@ const ALBUMS = [
   {
     id: "sense",
     title: "SENSE",
-    titleJa: "SENSE",
     year: 2010,
     color: "#1F618D",
+    itunesSearch: "Mr. Children SENSE",
     tracks: [
       "I",
       "擬態",
@@ -301,9 +300,9 @@ const ALBUMS = [
   {
     id: "an-imitation-blood-orange",
     title: "[(an imitation) blood orange]",
-    titleJa: "[(an imitation) blood orange]",
     year: 2012,
     color: "#E8450A",
+    itunesSearch: "Mr. Children an imitation blood orange",
     tracks: [
       "Hypnosis",
       "Marshmallow Day",
@@ -321,9 +320,9 @@ const ALBUMS = [
   {
     id: "reflection-naked",
     title: "REFLECTION {Naked}",
-    titleJa: "REFLECTION {Naked}",
     year: 2015,
     color: "#2E4057",
+    itunesSearch: "Mr. Children REFLECTION",
     tracks: [
       "fantasy",
       "FIGHT CLUB",
@@ -353,9 +352,9 @@ const ALBUMS = [
   {
     id: "juryoku-to-kokyu",
     title: "重力と呼吸",
-    titleJa: "重力と呼吸",
     year: 2018,
     color: "#566573",
+    itunesSearch: "Mr. Children 重力と呼吸",
     tracks: [
       "Your Song",
       "海にて、心は裸になりたがる",
@@ -372,9 +371,9 @@ const ALBUMS = [
   {
     id: "soundtracks",
     title: "SOUNDTRACKS",
-    titleJa: "SOUNDTRACKS",
     year: 2020,
     color: "#1ABC9C",
+    itunesSearch: "Mr. Children SOUNDTRACKS",
     tracks: [
       "DANCING SHOES",
       "Brand new planet",
@@ -391,9 +390,9 @@ const ALBUMS = [
   {
     id: "miss-you",
     title: "miss you",
-    titleJa: "miss you",
     year: 2023,
     color: "#7D6608",
+    itunesSearch: "Mr. Children miss you 2023",
     tracks: [
       "I MISS YOU",
       "Fifty's map ～おとなの地図",
@@ -411,4 +410,3 @@ const ALBUMS = [
     ]
   }
 ];
-

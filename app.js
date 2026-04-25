@@ -1,8 +1,74 @@
 /* ===== 定数 ===== */
 const STORAGE_KEY = 'mc-tracker-v1';
+const ARTWORK_KEY = 'mc-artwork-v1';
 
 /* ===== 状態 ===== */
-let sung = {};   // { "albumId::trackIndex": true }
+let sung = {};       // { "albumId::trackIndex": true }
+let artworkCache = {}; // { albumId: imageUrl }
+
+/* ===== アートワーク取得（iTunes Search API） ===== */
+function loadArtworkCache() {
+  try {
+    const raw = localStorage.getItem(ARTWORK_KEY);
+    artworkCache = raw ? JSON.parse(raw) : {};
+  } catch {
+    artworkCache = {};
+  }
+}
+
+function saveArtworkCache() {
+  localStorage.setItem(ARTWORK_KEY, JSON.stringify(artworkCache));
+}
+
+async function fetchArtwork(album) {
+  if (artworkCache[album.id]) return artworkCache[album.id];
+  try {
+    const q = encodeURIComponent(album.itunesSearch);
+    const res = await fetch(
+      `https://itunes.apple.com/search?term=${q}&media=music&entity=album&country=JP&limit=5`
+    );
+    const data = await res.json();
+    const hit = data.results?.find(r =>
+      r.collectionType === 'Album' &&
+      r.artistName?.toLowerCase().includes('children')
+    ) ?? data.results?.[0];
+    if (hit?.artworkUrl100) {
+      const url = hit.artworkUrl100.replace('100x100bb', '600x600bb');
+      artworkCache[album.id] = url;
+      saveArtworkCache();
+      return url;
+    }
+  } catch {
+    /* ネットワークエラー時はプレースホルダーを維持 */
+  }
+  return null;
+}
+
+function applyArtwork(albumId, url) {
+  document.querySelectorAll(`[data-artwork="${albumId}"]`).forEach(el => {
+    el.style.backgroundImage = `url('${url}')`;
+    el.style.backgroundSize = 'cover';
+    el.style.backgroundPosition = 'center';
+    el.style.color = 'transparent';
+    el.textContent = '';
+  });
+}
+
+async function loadAllArtwork() {
+  loadArtworkCache();
+  /* キャッシュ済みをまず即時適用 */
+  ALBUMS.forEach(album => {
+    if (artworkCache[album.id]) applyArtwork(album.id, artworkCache[album.id]);
+  });
+  /* 未キャッシュ分をバックグラウンドで取得 */
+  const missing = ALBUMS.filter(a => !artworkCache[a.id]);
+  for (const album of missing) {
+    const url = await fetchArtwork(album);
+    if (url) applyArtwork(album.id, url);
+    /* API レート制限を避けるため少し間を置く */
+    await new Promise(r => setTimeout(r, 150));
+  }
+}
 
 /* ===== LocalStorage ===== */
 function loadState() {
@@ -65,7 +131,7 @@ function renderAlbumView() {
 
     card.innerHTML = `
       <div class="album-header">
-        <div class="album-art" style="${makeArtStyle(album.color)}">${album.title}</div>
+        <div class="album-art" data-artwork="${album.id}" style="${makeArtStyle(album.color)}">${album.title}</div>
         <div class="album-info">
           <div class="album-title">${album.title}</div>
           <div class="album-year">${album.year}年</div>
@@ -353,7 +419,7 @@ function renderKanaView() {
       item.className = 'kana-track-item' + (isSung ? ' sung' : '');
       item.dataset.key = key;
       item.innerHTML = `
-        <div class="kana-album-art" style="${makeArtStyle(album.color)}">${album.title.slice(0,4)}</div>
+        <div class="kana-album-art" data-artwork="${album.id}" style="${makeArtStyle(album.color)}">${album.title.slice(0,4)}</div>
         <div class="kana-track-info">
           <div class="kana-track-name">${track}</div>
           <div class="kana-album-name">${album.title} (${album.year})</div>
@@ -399,4 +465,5 @@ document.addEventListener('DOMContentLoaded', () => {
   renderAlbumView();
   renderKanaView();
   updateProgress();
+  loadAllArtwork();
 });
