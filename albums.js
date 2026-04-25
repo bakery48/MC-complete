@@ -231,6 +231,19 @@ const ALBUMS = [
     ]
   },
   {
+    id: "four-dimensions",
+    title: "四次元 Four Dimensions",
+    year: 2005,
+    color: "#1D8348",
+    itunesSearch: "Mr. Children 四次元 Four Dimensions",
+    tracks: [
+      "未来",
+      "and I love you",
+      "ランニングハイ",
+      "ヨーイドン"
+    ]
+  },
+  {
     id: "home",
     title: "HOME",
     year: 2007,
