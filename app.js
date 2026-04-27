@@ -116,7 +116,7 @@ function updateProgress() {
 
 /* ===== アルバムアート（カラープレースホルダー） ===== */
 function makeArtStyle(color) {
-  return `background:${color};`;
+  return `background-color:${color};`;
 }
 
 /* ===== アルバム別ビュー ===== */

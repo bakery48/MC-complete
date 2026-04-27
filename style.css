@@ -187,6 +187,7 @@ body {
   letter-spacing: 0.03em;
   background-size: cover;
   background-position: center;
+  background-repeat: no-repeat;
   overflow: hidden;
 }
 
@@ -387,6 +388,7 @@ body {
   text-align: center;
   background-size: cover;
   background-position: center;
+  background-repeat: no-repeat;
   overflow: hidden;
 }
 
