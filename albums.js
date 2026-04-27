@@ -237,9 +237,6 @@ const ALBUMS = [
     color: "#1D8348",
     itunesSearch: "Mr. Children 四次元 Four Dimensions",
     tracks: [
-      "未来",
-      "and I love you",
-      "ランニングハイ",
       "ヨーイドン"
     ]
   },

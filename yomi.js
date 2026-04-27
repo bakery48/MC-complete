@@ -154,10 +154,7 @@ const YOMI_MAP = {
   "i-love-u::12": "せんすい",
 
   // === 四次元 Four Dimensions (2005) ===
-  "four-dimensions::0": "みらい",
-  "four-dimensions::1": "あんどあいらぶゆー",
-  "four-dimensions::2": "らんにんぐはい",
-  "four-dimensions::3": "よーいどん",
+  "four-dimensions::0": "よーいどん",
 
   // === HOME (2007) ===
   "home::0": "さけびいのり",
