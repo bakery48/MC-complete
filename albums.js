@@ -283,7 +283,6 @@ const ALBUMS = [
       "Heavenly kiss",
       "ニシエヒガシエ EAST Remix",
       "1999年、夏、沖縄",
-      "花",
       "さよなら2001年",
       "I'm sorry",
       "妄想満月",
