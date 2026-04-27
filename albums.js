@@ -484,6 +484,26 @@ const ALBUMS = [
     ]
   },
   {
+    id: "kioku-no-tabibito",
+    title: "記憶の旅人",
+    year: 2024,
+    color: "#A9CCE3",
+    itunesSearch: "Mr. Children 記憶の旅人 2024",
+    tracks: [
+      "記憶の旅人"
+    ]
+  },
+  {
+    id: "in-the-pocket",
+    title: "in the pocket",
+    year: 2024,
+    color: "#A9DFBF",
+    itunesSearch: "Mr. Children in the pocket 2024",
+    tracks: [
+      "in the pocket"
+    ]
+  },
+  {
     id: "ubugoe",
     title: "産声",
     year: 2026,
