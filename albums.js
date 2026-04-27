@@ -301,8 +301,18 @@ const ALBUMS = [
     color: "#C9A84C",
     itunesSearch: "Mr. Children GIFT single 2007",
     tracks: [
-      "GIFT",
       "横断歩道を渡る人たち"
+    ]
+  },
+  {
+    id: "hanabi-single",
+    title: "HANABI",
+    year: 2008,
+    color: "#E8A020",
+    itunesSearch: "Mr. Children HANABI single 2008",
+    tracks: [
+      "タダダキアッテ",
+      "夏が終わる 〜夏の日のオマージュ〜"
     ]
   },
   {
@@ -324,6 +334,7 @@ const ALBUMS = [
       "ロックンロール",
       "羊、吠える",
       "風と星とメビウスの輪",
+      "GIFT",
       "花の匂い"
     ]
   },

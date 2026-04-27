@@ -197,8 +197,11 @@ const YOMI_MAP = {
   "b-side::21": "にしえひがしえうぇすとりみっくす",
 
   // === GIFT シングル (2007) ===
-  "gift-single::0": "ぎふと",
-  "gift-single::1": "よこだんほどうをわたるひとたち",
+  "gift-single::0": "よこだんほどうをわたるひとたち",
+
+  // === HANABI シングル (2008) ===
+  "hanabi-single::0": "ただだきあって",
+  "hanabi-single::1": "なつがおわるなつのひのおまーじゅ",
 
   // === SUPERMARKET FANTASY (2008) ===
   "supermarket-fantasy::0": "しゅうまつのこんふぃでんすそんぐ",
@@ -213,7 +216,8 @@ const YOMI_MAP = {
   "supermarket-fantasy::9": "ろっくんろーる",
   "supermarket-fantasy::10": "ひつじほえる",
   "supermarket-fantasy::11": "かぜとほしとめびうすのわ",
-  "supermarket-fantasy::12": "はなのにおい",
+  "supermarket-fantasy::12": "ぎふと",
+  "supermarket-fantasy::13": "はなのにおい",
 
   // === SENSE (2010) ===
   "sense::0": "あい",
