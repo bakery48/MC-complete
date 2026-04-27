@@ -267,6 +267,37 @@ const ALBUMS = [
     ]
   },
   {
+    id: "b-side",
+    title: "B-SIDE",
+    year: 2007,
+    color: "#5D6D7E",
+    itunesSearch: "Mr. Children B-SIDE",
+    tracks: [
+      "君の事以外は何も考えられない",
+      "my confidence song",
+      "雨のち晴れ Remix version",
+      "フラジャイル",
+      "また会えるかな",
+      "Love is Blindness",
+      "旅人",
+      "デルモ",
+      "独り言",
+      "Heavenly kiss",
+      "ニシエヒガシエ EAST Remix",
+      "1999年、夏、沖縄",
+      "花",
+      "さよなら2001年",
+      "I'm sorry",
+      "妄想満月",
+      "こんな風にひどく蒸し暑い日",
+      "ほころび",
+      "my sweet heart",
+      "ひびき",
+      "くるみ -for the Film- 幸福な食卓",
+      "ニシエヒガシエ WEST Remix"
+    ]
+  },
+  {
     id: "supermarket-fantasy",
     title: "SUPERMARKET FANTASY",
     year: 2008,
