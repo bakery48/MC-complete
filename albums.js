@@ -295,6 +295,17 @@ const ALBUMS = [
     ]
   },
   {
+    id: "gift-single",
+    title: "GIFT",
+    year: 2007,
+    color: "#C9A84C",
+    itunesSearch: "Mr. Children GIFT single 2007",
+    tracks: [
+      "GIFT",
+      "横断歩道を渡る人たち"
+    ]
+  },
+  {
     id: "supermarket-fantasy",
     title: "SUPERMARKET FANTASY",
     year: 2008,
@@ -313,7 +324,6 @@ const ALBUMS = [
       "ロックンロール",
       "羊、吠える",
       "風と星とメビウスの輪",
-      "GIFT",
       "花の匂い"
     ]
   },
