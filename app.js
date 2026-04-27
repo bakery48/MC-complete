@@ -309,48 +309,24 @@ function initFooter() {
 
 /* 行（あ〜ん、英数字、記号）の定義 */
 const KANA_ROWS = [
-  { label: 'あ', chars: 'あいうえおアイウエオ' },
-  { label: 'か', chars: 'かきくけこカキクケコ' },
-  { label: 'さ', chars: 'さしすせそサシスセソ' },
-  { label: 'た', chars: 'たちつてとタチツテト' },
-  { label: 'な', chars: 'なにぬねのナニヌネノ' },
-  { label: 'は', chars: 'はひふへほハヒフヘホ' },
-  { label: 'ま', chars: 'まみむめもマミムメモ' },
-  { label: 'や', chars: 'やゆよヤユヨ' },
-  { label: 'ら', chars: 'らりるれろラリルレロ' },
-  { label: 'わ', chars: 'わをんワヲン' },
-  { label: 'A', chars: null },  /* 英数字（null = ASCII 判定） */
-  { label: '#', chars: null },  /* 記号・その他 */
+  { label: 'あ', chars: 'あいうえおぁぃぅぇぉ' },
+  { label: 'か', chars: 'かきくけこがぎぐげご' },
+  { label: 'さ', chars: 'さしすせそざじずぜぞ' },
+  { label: 'た', chars: 'たちつてとだぢづでど' },
+  { label: 'な', chars: 'なにぬねの' },
+  { label: 'は', chars: 'はひふへほばびぶべぼぱぴぷぺぽ' },
+  { label: 'ま', chars: 'まみむめも' },
+  { label: 'や', chars: 'やゆよ' },
+  { label: 'ら', chars: 'らりるれろ' },
+  { label: 'わ', chars: 'わをん' },
+  { label: '#', chars: null },
 ];
 
-function getRowLabel(title) {
-  const ch = title[0];
-  if (!ch) return '#';
-
-  /* 長音・記号類を読み飛ばして先頭の有効文字を探す */
-  for (let i = 0; i < title.length; i++) {
-    const c = title[i];
-    const code = c.codePointAt(0);
-
-    /* ひらがな U+3041–U+3096 */
-    if (code >= 0x3041 && code <= 0x3096) {
-      for (const row of KANA_ROWS) {
-        if (row.chars && row.chars.includes(c)) return row.label;
-      }
-    }
-    /* カタカナ U+30A1–U+30F6 */
-    if (code >= 0x30A1 && code <= 0x30F6) {
-      const hira = String.fromCodePoint(code - 0x60); /* カタカナ→ひらがな変換 */
-      for (const row of KANA_ROWS) {
-        if (row.chars && row.chars.includes(hira)) return row.label;
-      }
-    }
-    /* ASCII 英字 */
-    if ((code >= 0x41 && code <= 0x5A) || (code >= 0x61 && code <= 0x7A)) {
-      return 'A';
-    }
-    /* 漢字 U+4E00– → 先頭文字として採用できないので次へは進まず '#' */
-    if (code >= 0x4E00) return '#';
+function getRowLabel(yomi) {
+  if (!yomi) return '#';
+  const ch = yomi[0];
+  for (const row of KANA_ROWS) {
+    if (row.chars && row.chars.includes(ch)) return row.label;
   }
   return '#';
 }
@@ -369,13 +345,13 @@ function buildKanaData() {
   KANA_ROWS.forEach(r => { groups[r.label] = []; });
 
   all.forEach(item => {
-    const label = getRowLabel(item.track);
+    item.yomi = YOMI_MAP[item.key] || item.track;
+    const label = getRowLabel(item.yomi);
     groups[label].push(item);
   });
 
-  /* 各グループ内をタイトル文字列順にソート */
   KANA_ROWS.forEach(r => {
-    groups[r.label].sort((a, b) => a.track.localeCompare(b.track, 'ja'));
+    groups[r.label].sort((a, b) => a.yomi.localeCompare(b.yomi, 'ja'));
   });
 
   return groups;
