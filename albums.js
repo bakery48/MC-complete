@@ -450,6 +450,18 @@ const ALBUMS = [
     ]
   },
   {
+    id: "best-2015-2021",
+    title: "Mr.Children 2015-2021 & NOW",
+    year: 2021,
+    color: "#2471A3",
+    itunesSearch: "Mr. Children 2015-2021 NOW",
+    tracks: [
+      "ヒカリノアトリエ",
+      "永遠",
+      "生きろ"
+    ]
+  },
+  {
     id: "miss-you",
     title: "miss you",
     year: 2023,
