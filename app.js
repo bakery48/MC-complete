@@ -57,16 +57,19 @@ function applyArtwork(albumId, url) {
 
 async function loadAllArtwork() {
   loadArtworkCache();
-  /* キャッシュ済みをまず即時適用 */
+  /* artworkUrl 指定済みはキャッシュより優先して即時適用 */
   ALBUMS.forEach(album => {
-    if (artworkCache[album.id]) applyArtwork(album.id, artworkCache[album.id]);
+    if (album.artworkUrl) {
+      applyArtwork(album.id, album.artworkUrl);
+    } else if (artworkCache[album.id]) {
+      applyArtwork(album.id, artworkCache[album.id]);
+    }
   });
-  /* 未キャッシュ分をバックグラウンドで取得 */
-  const missing = ALBUMS.filter(a => !artworkCache[a.id]);
+  /* artworkUrl も キャッシュもないものを iTunes から取得 */
+  const missing = ALBUMS.filter(a => !a.artworkUrl && !artworkCache[a.id]);
   for (const album of missing) {
     const url = await fetchArtwork(album);
     if (url) applyArtwork(album.id, url);
-    /* API レート制限を避けるため少し間を置く */
     await new Promise(r => setTimeout(r, 150));
   }
 }
