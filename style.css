@@ -33,7 +33,8 @@ body {
                "Noto Sans JP", sans-serif;
   background: var(--bg);
   color: var(--text);
-  min-height: 100dvh;
+  height: 100dvh;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
 }
@@ -308,7 +309,7 @@ body {
 /* ===== 五十音ビュー ===== */
 .kana-jump-nav {
   position: sticky;
-  top: calc(var(--header-h) + var(--tab-h));
+  top: 0;
   z-index: 80;
   display: flex;
   flex-wrap: wrap;
