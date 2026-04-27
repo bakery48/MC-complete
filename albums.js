@@ -106,6 +106,7 @@ const ALBUMS = [
     year: 1997,
     color: "#8E44AD",
     itunesSearch: "Mr. Children bolero",
+    artworkUrl: "artwork/bolero.jpg",
     tracks: [
       "Prologue",
       "Everything (It's you)",

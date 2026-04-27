@@ -21,6 +21,7 @@ function saveArtworkCache() {
 }
 
 async function fetchArtwork(album) {
+  if (album.artworkUrl) return album.artworkUrl;
   if (artworkCache[album.id]) return artworkCache[album.id];
   try {
     const q = encodeURIComponent(album.itunesSearch);
