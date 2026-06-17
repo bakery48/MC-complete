@@ -293,8 +293,27 @@ function showModal(message, onConfirm) {
   overlay.addEventListener('click', handleOverlay);
 }
 
+/* ===== ランダム選曲 ===== */
+function pickRandom() {
+  const unsung = [];
+  ALBUMS.forEach(album => {
+    album.tracks.forEach((track, i) => {
+      if (!sung[trackKey(album.id, i)]) {
+        unsung.push({ album, track });
+      }
+    });
+  });
+  if (unsung.length === 0) {
+    showModal('未歌唱の曲はありません！\nすべての曲を歌唱済みです。', null);
+    return;
+  }
+  const pick = unsung[Math.floor(Math.random() * unsung.length)];
+  showModal(`🎵 ${pick.track}\n\n${pick.album.title}（${pick.album.year}年）`, null);
+}
+
 /* ===== フッターボタン初期化 ===== */
 function initFooter() {
+  document.getElementById('btn-random').addEventListener('click', pickRandom);
   document.getElementById('btn-export').addEventListener('click', exportData);
 
   const fileInput = document.getElementById('import-file-input');

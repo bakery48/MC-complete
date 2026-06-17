@@ -477,6 +477,11 @@ body {
   border-color: var(--danger);
 }
 
+.footer-btn.accent {
+  color: var(--accent-light);
+  border-color: var(--accent);
+}
+
 /* ===== モーダル ===== */
 .modal-overlay {
   position: fixed;
@@ -507,6 +512,7 @@ body {
   line-height: 1.6;
   margin-bottom: 20px;
   color: var(--text);
+  white-space: pre-wrap;
 }
 
 .modal-btns {
