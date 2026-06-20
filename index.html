@@ -33,6 +33,7 @@
   <nav class="tab-nav">
     <button class="tab-btn active" data-tab="album">アルバム別</button>
     <button class="tab-btn" data-tab="kana">五十音順</button>
+    <button class="tab-btn" data-tab="ranking">ランキング</button>
   </nav>
 
   <!-- コンテンツエリア -->
@@ -41,6 +42,15 @@
     <!-- アルバム別ビュー -->
     <section id="view-album" class="view active">
       <div id="album-list"></div>
+    </section>
+
+    <!-- ランキングビュー -->
+    <section id="view-ranking" class="view">
+      <div class="ranking-sort">
+        <button class="ranking-sort-btn active" data-sort="rate">消化率が高い順</button>
+        <button class="ranking-sort-btn" data-sort="remaining">未消化曲が多い順</button>
+      </div>
+      <div id="ranking-list"></div>
     </section>
 
     <!-- 五十音順ビュー -->

@@ -200,6 +200,7 @@ function renderAlbumView() {
         /* アルバム進捗更新 */
         updateAlbumProgress(card, album);
         updateProgress();
+        updateRankingIfVisible();
       });
     });
 
@@ -229,6 +230,70 @@ function toggleTrack(key) {
   pushKeyToFirebase(key);
 }
 
+/* ===== ランキングビュー ===== */
+let rankingSort = 'rate'; // 'rate' | 'remaining'
+
+function renderRankingView() {
+  const listEl = document.getElementById('ranking-list');
+  if (!listEl) return;
+  listEl.innerHTML = '';
+
+  const items = ALBUMS.map(album => {
+    const done = albumSungCount(album);
+    const total = album.tracks.length;
+    return { album, done, total, rate: total ? done / total : 0, remaining: total - done };
+  });
+
+  if (rankingSort === 'rate') {
+    items.sort((a, b) => b.rate - a.rate || b.done - a.done);
+  } else {
+    items.sort((a, b) => b.remaining - a.remaining || a.rate - b.rate);
+  }
+
+  items.forEach(({ album, done, total, rate, remaining }, i) => {
+    const rank = i + 1;
+    const pct  = Math.round(rate * 100);
+    const topClass = rank <= 3 ? ` top-${rank}` : '';
+    const primaryStat = rankingSort === 'rate' ? `${pct}%` : `残${remaining}曲`;
+
+    const el = document.createElement('div');
+    el.className = 'ranking-item';
+    el.innerHTML = `
+      <span class="rank-num${topClass}">${rank}</span>
+      <div class="rank-color" style="background:${album.color}"></div>
+      <div class="rank-info">
+        <div class="rank-title">${album.title}</div>
+        <div class="rank-year">${album.year}年</div>
+        <div class="rank-bar-wrap">
+          <div class="rank-bar-fill" style="width:${pct}%;background:${album.color}"></div>
+        </div>
+      </div>
+      <div class="rank-stat">
+        <div class="rank-pct">${primaryStat}</div>
+        <div class="rank-frac">${done}/${total}曲</div>
+      </div>
+    `;
+    listEl.appendChild(el);
+  });
+}
+
+function updateRankingIfVisible() {
+  if (document.getElementById('view-ranking')?.classList.contains('active')) {
+    renderRankingView();
+  }
+}
+
+function initRankingView() {
+  document.querySelectorAll('.ranking-sort-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      rankingSort = btn.dataset.sort;
+      document.querySelectorAll('.ranking-sort-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderRankingView();
+    });
+  });
+}
+
 /* ===== タブ切り替え ===== */
 function initTabs() {
   document.querySelectorAll('.tab-btn').forEach(btn => {
@@ -237,6 +302,7 @@ function initTabs() {
       document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
       btn.classList.add('active');
       document.getElementById(`view-${btn.dataset.tab}`).classList.add('active');
+      if (btn.dataset.tab === 'ranking') renderRankingView();
     });
   });
 }
@@ -278,6 +344,7 @@ function importData(file) {
           pushAllToFirebase();
           renderAlbumView();
           renderKanaView();
+          renderRankingView();
           updateProgress();
         }
       );
@@ -298,6 +365,7 @@ function resetData() {
     clearFirebase();
     renderAlbumView();
     renderKanaView();
+    renderRankingView();
     updateProgress();
   });
 }
@@ -448,6 +516,7 @@ async function pollFirebase() {
         if (album && card) updateAlbumProgress(card, album);
       });
       updateProgress();
+      updateRankingIfVisible();
     }
     setSyncStatus('ok');
   } catch {
@@ -651,6 +720,7 @@ function renderKanaView() {
         /* アルバムビューも同期 */
         syncAlbumViewItem(key, s);
         updateProgress();
+        updateRankingIfVisible();
       });
       section.appendChild(item);
     });
@@ -681,8 +751,10 @@ document.addEventListener('DOMContentLoaded', () => {
   initTabs();
   initFooter();
   initSyncModal();
+  initRankingView();
   renderAlbumView();
   renderKanaView();
+  renderRankingView();
   updateProgress();
   loadAllArtwork();
   initSyncFromStorage();
