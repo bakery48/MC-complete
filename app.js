@@ -4,7 +4,8 @@ const ARTWORK_KEY    = 'mc-artwork-v1';
 const SYNC_STATE_KEY = 'mc-tracker-sync-v1';
 const FIREBASE_URL_KEY  = 'mc-firebase-url';
 const FIREBASE_ROOM_KEY = 'mc-firebase-room';
-const PREF_KEY = 'mc-pref-v1';
+const PREF_KEY      = 'mc-pref-v1';
+const PREF_SYNC_KEY = 'mc-pref-sync-v1';
 
 /* ===== 状態 ===== */
 let sung = {};       // { "albumId::trackIndex": true }
@@ -13,7 +14,8 @@ let sungSync = {};   // { "albumId::trackIndex": { v: 1|-1, at: timestamp } }
 let syncUrl     = null;
 let syncRoomId  = 'default';
 let syncPollId  = null;
-let pref = {}; // { "albumId::trackIndex": "strong" | "weak" }
+let pref     = {}; // { "albumId::trackIndex": "strong" | "weak" }
+let prefSync = {}; // { "albumId::trackIndex": { v: "strong"|"weak"|null, at: timestamp } }
 
 /* ===== アートワーク取得（iTunes Search API） ===== */
 function loadArtworkCache() {
@@ -123,11 +125,32 @@ function savePref() {
   localStorage.setItem(PREF_KEY, JSON.stringify(pref));
 }
 
+function loadPrefSync() {
+  try { prefSync = JSON.parse(localStorage.getItem(PREF_SYNC_KEY) || '{}'); }
+  catch { prefSync = {}; }
+  for (const [k, v] of Object.entries(pref)) {
+    if (!prefSync[k]) prefSync[k] = { v, at: 0 };
+  }
+}
+
+function savePrefSync() {
+  localStorage.setItem(PREF_SYNC_KEY, JSON.stringify(prefSync));
+}
+
 function getPref(key) { return pref[key] || ''; }
 
 function setPref(key, value) {
-  if (pref[key] === value) { delete pref[key]; } else { pref[key] = value; }
+  const now = Date.now();
+  if (pref[key] === value) {
+    delete pref[key];
+    prefSync[key] = { v: null, at: now };
+  } else {
+    pref[key] = value;
+    prefSync[key] = { v: value, at: now };
+  }
   savePref();
+  savePrefSync();
+  pushPrefKeyToFirebase(key);
 }
 
 function updatePrefBtns(itemEl, key) {
@@ -496,6 +519,13 @@ function getFirebaseEndpoint() {
   return `${base}/mc-karaoke/${room}.json`;
 }
 
+function getPrefFirebaseEndpoint() {
+  if (!syncUrl) return null;
+  const base = syncUrl.replace(/\/+$/, '');
+  const room = (syncRoomId || 'default').replace(/[^a-zA-Z0-9_-]/g, '_');
+  return `${base}/mc-pref/${room}.json`;
+}
+
 function setSyncStatus(status) {
   const dot = document.getElementById('sync-dot');
   if (dot) dot.className = 'sync-dot ' + status;
@@ -532,11 +562,66 @@ async function pushAllToFirebase() {
   }
 }
 
-async function clearFirebase() {
-  const endpoint = getFirebaseEndpoint();
+async function pushPrefKeyToFirebase(key) {
+  const endpoint = getPrefFirebaseEndpoint();
   if (!endpoint) return;
   try {
-    await fetch(endpoint, { method: 'DELETE' });
+    await fetch(endpoint, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ [key]: prefSync[key] }),
+    });
+  } catch {}
+}
+
+async function pushAllPrefToFirebase() {
+  const endpoint = getPrefFirebaseEndpoint();
+  if (!endpoint) return;
+  try {
+    await fetch(endpoint, {
+      method: Object.keys(prefSync).length ? 'PATCH' : 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: Object.keys(prefSync).length ? JSON.stringify(prefSync) : undefined,
+    });
+  } catch {}
+}
+
+async function pollPrefFromFirebase() {
+  const endpoint = getPrefFirebaseEndpoint();
+  if (!endpoint) return;
+  try {
+    const res = await fetch(endpoint);
+    if (!res.ok) return;
+    const remote = await res.json();
+    if (!remote) return;
+
+    const changedKeys = [];
+    for (const [key, remoteEntry] of Object.entries(remote)) {
+      const local = prefSync[key];
+      if (!local || remoteEntry.at > local.at) {
+        prefSync[key] = remoteEntry;
+        if (remoteEntry.v) { pref[key] = remoteEntry.v; }
+        else { delete pref[key]; }
+        changedKeys.push(key);
+      }
+    }
+    if (changedKeys.length) {
+      savePref();
+      savePrefSync();
+      changedKeys.forEach(key => {
+        document.querySelectorAll(`.track-item[data-key="${key}"], .kana-track-item[data-key="${key}"]`)
+          .forEach(el => updatePrefBtns(el, key));
+      });
+    }
+  } catch {}
+}
+
+async function clearFirebase() {
+  const endpoint    = getFirebaseEndpoint();
+  const prefEndpoint = getPrefFirebaseEndpoint();
+  try {
+    if (endpoint)    await fetch(endpoint,    { method: 'DELETE' });
+    if (prefEndpoint) await fetch(prefEndpoint, { method: 'DELETE' });
     setSyncStatus('ok');
   } catch {
     setSyncStatus('error');
@@ -594,6 +679,7 @@ async function pollFirebase() {
   } catch {
     setSyncStatus('error');
   }
+  pollPrefFromFirebase();
 }
 
 function startSync(url, room) {
@@ -608,16 +694,25 @@ function startSync(url, room) {
 }
 
 async function initialSync() {
-  await pollFirebase();
-  if (!syncUrl || !Object.keys(sungSync).length) return;
-  const endpoint = getFirebaseEndpoint();
-  if (!endpoint) return;
+  await pollFirebase(); // includes pollPrefFromFirebase
+  if (!syncUrl) return;
+  const endpoint     = getFirebaseEndpoint();
+  const prefEndpoint = getPrefFirebaseEndpoint();
   try {
-    await fetch(endpoint, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(sungSync),
-    });
+    if (endpoint && Object.keys(sungSync).length) {
+      await fetch(endpoint, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(sungSync),
+      });
+    }
+    if (prefEndpoint && Object.keys(prefSync).length) {
+      await fetch(prefEndpoint, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(prefSync),
+      });
+    }
     setSyncStatus('ok');
   } catch {
     setSyncStatus('error');
@@ -836,6 +931,7 @@ document.addEventListener('DOMContentLoaded', () => {
   loadState();
   loadSyncState();
   loadPref();
+  loadPrefSync();
   initTabs();
   initFooter();
   document.getElementById('btn-sung-filter').addEventListener('click', toggleSungFilter);
