@@ -151,6 +151,7 @@ function setPref(key, value) {
   savePref();
   savePrefSync();
   pushPrefKeyToFirebase(key);
+  updateStrongCount();
 }
 
 function updatePrefBtns(itemEl, key) {
@@ -184,6 +185,16 @@ function updateProgress() {
   const pct = total ? Math.round((done / total) * 100) : 0;
   document.getElementById('progress-text').textContent = `${done} / ${total}`;
   document.getElementById('progress-bar').style.width = `${pct}%`;
+  updateStrongCount();
+}
+
+function updateStrongCount() {
+  const count = Object.keys(pref).filter(k => pref[k] === 'strong' && !sung[k]).length;
+  const el = document.getElementById('strong-count');
+  if (el) {
+    el.textContent = count > 0 ? `強 ${count}` : '';
+    el.classList.toggle('has-count', count > 0);
+  }
 }
 
 /* ===== アルバムアート（カラープレースホルダー） ===== */
@@ -612,6 +623,7 @@ async function pollPrefFromFirebase() {
         document.querySelectorAll(`.track-item[data-key="${key}"], .kana-track-item[data-key="${key}"]`)
           .forEach(el => updatePrefBtns(el, key));
       });
+      updateStrongCount();
     }
   } catch {}
 }

@@ -86,6 +86,18 @@ body {
   min-width: 80px;
 }
 
+.strong-count-badge {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--sung);
+  white-space: nowrap;
+  display: none;
+}
+
+.strong-count-badge.has-count {
+  display: block;
+}
+
 #progress-text {
   font-size: 0.78rem;
   color: var(--text-muted);
