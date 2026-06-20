@@ -297,6 +297,48 @@ body.hide-sung .kana-section.all-sung {
   transform: rotate(180deg);
 }
 
+/* ===== 強弱ボタン ===== */
+.pref-btns {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.track-item.sung .pref-btns,
+.kana-track-item.sung .pref-btns {
+  display: none;
+}
+
+.pref-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--surface2);
+  color: var(--text-muted);
+  font-size: 0.7rem;
+  font-weight: 700;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+  flex-shrink: 0;
+}
+
+.pref-btn.strong-active {
+  background: rgba(76, 175, 125, 0.2);
+  border-color: var(--sung);
+  color: var(--sung);
+}
+
+.pref-btn.weak-active {
+  background: rgba(224, 90, 90, 0.2);
+  border-color: var(--danger);
+  color: var(--danger);
+}
+
 /* ===== 曲リスト ===== */
 .track-list {
   display: none;

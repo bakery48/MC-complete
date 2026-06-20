@@ -4,6 +4,7 @@ const ARTWORK_KEY    = 'mc-artwork-v1';
 const SYNC_STATE_KEY = 'mc-tracker-sync-v1';
 const FIREBASE_URL_KEY  = 'mc-firebase-url';
 const FIREBASE_ROOM_KEY = 'mc-firebase-room';
+const PREF_KEY = 'mc-pref-v1';
 
 /* ===== 状態 ===== */
 let sung = {};       // { "albumId::trackIndex": true }
@@ -12,6 +13,7 @@ let sungSync = {};   // { "albumId::trackIndex": { v: 1|-1, at: timestamp } }
 let syncUrl     = null;
 let syncRoomId  = 'default';
 let syncPollId  = null;
+let pref = {}; // { "albumId::trackIndex": "strong" | "weak" }
 
 /* ===== アートワーク取得（iTunes Search API） ===== */
 function loadArtworkCache() {
@@ -111,6 +113,30 @@ function saveSyncState() {
   localStorage.setItem(SYNC_STATE_KEY, JSON.stringify(sungSync));
 }
 
+/* ===== 強弱プリファレンス ===== */
+function loadPref() {
+  try { pref = JSON.parse(localStorage.getItem(PREF_KEY) || '{}'); }
+  catch { pref = {}; }
+}
+
+function savePref() {
+  localStorage.setItem(PREF_KEY, JSON.stringify(pref));
+}
+
+function getPref(key) { return pref[key] || ''; }
+
+function setPref(key, value) {
+  if (pref[key] === value) { delete pref[key]; } else { pref[key] = value; }
+  savePref();
+}
+
+function updatePrefBtns(itemEl, key) {
+  itemEl.querySelectorAll('.pref-btn').forEach(b => {
+    b.classList.toggle('strong-active', b.dataset.pref === 'strong' && pref[key] === 'strong');
+    b.classList.toggle('weak-active',   b.dataset.pref === 'weak'   && pref[key] === 'weak');
+  });
+}
+
 function trackKey(albumId, trackIndex) {
   return `${albumId}::${trackIndex}`;
 }
@@ -173,10 +199,15 @@ function renderAlbumView() {
         ${album.tracks.map((track, i) => {
           const key = trackKey(album.id, i);
           const isSung = !!sung[key];
+          const cp = getPref(key);
           return `
             <div class="track-item${isSung ? ' sung' : ''}" data-key="${key}">
               <div class="track-check">${isSung ? '✓' : ''}</div>
               <div class="track-name">${track}</div>
+              <div class="pref-btns">
+                <button class="pref-btn${cp === 'strong' ? ' strong-active' : ''}" data-pref="strong">強</button>
+                <button class="pref-btn${cp === 'weak'   ? ' weak-active'   : ''}" data-pref="weak">弱</button>
+              </div>
             </div>
           `;
         }).join('')}
@@ -188,20 +219,28 @@ function renderAlbumView() {
       card.classList.toggle('open');
     });
 
-    /* 曲トグル */
+    /* 曲トグル & 強弱 */
     card.querySelectorAll('.track-item').forEach(item => {
       item.addEventListener('click', () => {
         const key = item.dataset.key;
         toggleTrack(key);
-        /* DOM更新 */
         const isSung = !!sung[key];
         item.classList.toggle('sung', isSung);
         item.querySelector('.track-check').textContent = isSung ? '✓' : '';
-        /* アルバム進捗更新 */
         updateAlbumProgress(card, album);
         updateProgress();
         updateRankingIfVisible();
         if (hideSung) updateSungFilterClasses();
+      });
+      item.querySelectorAll('.pref-btn').forEach(btn => {
+        btn.addEventListener('click', e => {
+          e.stopPropagation();
+          const key = item.dataset.key;
+          setPref(key, btn.dataset.pref);
+          updatePrefBtns(item, key);
+          const kanaEl = document.querySelector(`#view-kana .kana-track-item[data-key="${key}"]`);
+          if (kanaEl) updatePrefBtns(kanaEl, key);
+        });
       });
     });
 
@@ -737,11 +776,16 @@ function renderKanaView() {
       const item = document.createElement('div');
       item.className = 'kana-track-item' + (isSung ? ' sung' : '');
       item.dataset.key = key;
+      const cp = getPref(key);
       item.innerHTML = `
         <div class="kana-album-art" data-artwork="${album.id}" style="${makeArtStyle(album.color)}">${album.title.slice(0,4)}</div>
         <div class="kana-track-info">
           <div class="kana-track-name">${track}</div>
           <div class="kana-album-name">${album.title} (${album.year})</div>
+        </div>
+        <div class="pref-btns">
+          <button class="pref-btn${cp === 'strong' ? ' strong-active' : ''}" data-pref="strong">強</button>
+          <button class="pref-btn${cp === 'weak'   ? ' weak-active'   : ''}" data-pref="weak">弱</button>
         </div>
         <div class="kana-track-check">${isSung ? '✓' : ''}</div>
       `;
@@ -750,11 +794,20 @@ function renderKanaView() {
         const s = !!sung[key];
         item.classList.toggle('sung', s);
         item.querySelector('.kana-track-check').textContent = s ? '✓' : '';
-        /* アルバムビューも同期 */
         syncAlbumViewItem(key, s);
         updateProgress();
         updateRankingIfVisible();
         if (hideSung) updateSungFilterClasses();
+      });
+      item.querySelectorAll('.pref-btn').forEach(btn => {
+        btn.addEventListener('click', e => {
+          e.stopPropagation();
+          const key = item.dataset.key;
+          setPref(key, btn.dataset.pref);
+          updatePrefBtns(item, key);
+          const albumEl = document.querySelector(`#view-album .track-item[data-key="${key}"]`);
+          if (albumEl) updatePrefBtns(albumEl, key);
+        });
       });
       section.appendChild(item);
     });
@@ -782,6 +835,7 @@ function syncAlbumViewItem(key, isSung) {
 document.addEventListener('DOMContentLoaded', () => {
   loadState();
   loadSyncState();
+  loadPref();
   initTabs();
   initFooter();
   document.getElementById('btn-sung-filter').addEventListener('click', toggleSungFilter);
