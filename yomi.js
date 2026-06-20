@@ -314,6 +314,9 @@ const YOMI_MAP = {
   "miss-you::11": "でじゃびゅ",
   "miss-you::12": "おはよう",
 
+  // === himawari シングル (2017) ===
+  "himawari-single::0": "いそがしいぼくら",
+
   // === 記憶の旅人 シングル (2024) ===
   "kioku-no-tabibito::0": "きおくのたびびと",
 

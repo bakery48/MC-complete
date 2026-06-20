@@ -412,6 +412,16 @@ const ALBUMS = [
     ]
   },
   {
+    id: "himawari-single",
+    title: "himawari",
+    year: 2017,
+    color: "#F4B400",
+    itunesSearch: "Mr. Children himawari single 2017",
+    tracks: [
+      "忙しい僕ら"
+    ]
+  },
+  {
     id: "juryoku-to-kokyu",
     title: "重力と呼吸",
     year: 2018,
