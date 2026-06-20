@@ -161,6 +161,37 @@ body {
   border-bottom-color: var(--accent-light);
 }
 
+.sung-filter-btn {
+  padding: 0 10px;
+  height: var(--tab-h);
+  background: none;
+  border: none;
+  border-left: 1px solid var(--border);
+  color: var(--text-muted);
+  font-size: 0.72rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  -webkit-tap-highlight-color: transparent;
+  transition: color 0.15s, background 0.15s;
+}
+
+.sung-filter-btn.active {
+  color: var(--accent-light);
+  background: rgba(123, 104, 238, 0.12);
+}
+
+body.hide-sung .track-item.sung,
+body.hide-sung .kana-track-item.sung {
+  display: none;
+}
+
+body.hide-sung .album-card.all-sung,
+body.hide-sung .kana-section.all-sung {
+  display: none;
+}
+
 /* ===== コンテンツ ===== */
 .content {
   flex: 1;

@@ -201,6 +201,7 @@ function renderAlbumView() {
         updateAlbumProgress(card, album);
         updateProgress();
         updateRankingIfVisible();
+        if (hideSung) updateSungFilterClasses();
       });
     });
 
@@ -228,6 +229,35 @@ function toggleTrack(key) {
   saveState();
   saveSyncState();
   pushKeyToFirebase(key);
+}
+
+/* ===== 歌唱済みフィルター ===== */
+let hideSung = false;
+
+function updateSungFilterClasses() {
+  document.querySelectorAll('.album-card').forEach(card => {
+    const album = ALBUMS.find(a => a.id === card.dataset.albumId);
+    if (!album) return;
+    const allSung = album.tracks.every((_, i) => sung[trackKey(album.id, i)]);
+    card.classList.toggle('all-sung', allSung);
+  });
+  document.querySelectorAll('.kana-section').forEach(section => {
+    const items = section.querySelectorAll('.kana-track-item');
+    if (!items.length) return;
+    const allSung = [...items].every(el => el.classList.contains('sung'));
+    section.classList.toggle('all-sung', allSung);
+  });
+}
+
+function toggleSungFilter() {
+  hideSung = !hideSung;
+  document.body.classList.toggle('hide-sung', hideSung);
+  const btn = document.getElementById('btn-sung-filter');
+  if (btn) {
+    btn.classList.toggle('active', hideSung);
+    btn.textContent = hideSung ? '済を表示' : '済を隠す';
+  }
+  if (hideSung) updateSungFilterClasses();
 }
 
 /* ===== ランキングビュー ===== */
@@ -346,6 +376,7 @@ function importData(file) {
           renderKanaView();
           renderRankingView();
           updateProgress();
+          if (hideSung) updateSungFilterClasses();
         }
       );
     } catch {
@@ -367,6 +398,7 @@ function resetData() {
     renderKanaView();
     renderRankingView();
     updateProgress();
+    if (hideSung) updateSungFilterClasses();
   });
 }
 
@@ -517,6 +549,7 @@ async function pollFirebase() {
       });
       updateProgress();
       updateRankingIfVisible();
+      if (hideSung) updateSungFilterClasses();
     }
     setSyncStatus('ok');
   } catch {
@@ -721,6 +754,7 @@ function renderKanaView() {
         syncAlbumViewItem(key, s);
         updateProgress();
         updateRankingIfVisible();
+        if (hideSung) updateSungFilterClasses();
       });
       section.appendChild(item);
     });
@@ -750,6 +784,7 @@ document.addEventListener('DOMContentLoaded', () => {
   loadSyncState();
   initTabs();
   initFooter();
+  document.getElementById('btn-sung-filter').addEventListener('click', toggleSungFilter);
   initSyncModal();
   initRankingView();
   renderAlbumView();
