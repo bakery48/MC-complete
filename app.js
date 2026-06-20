@@ -1,10 +1,17 @@
 /* ===== 定数 ===== */
-const STORAGE_KEY = 'mc-tracker-v1';
-const ARTWORK_KEY = 'mc-artwork-v1';
+const STORAGE_KEY    = 'mc-tracker-v1';
+const ARTWORK_KEY    = 'mc-artwork-v1';
+const SYNC_STATE_KEY = 'mc-tracker-sync-v1';
+const FIREBASE_URL_KEY  = 'mc-firebase-url';
+const FIREBASE_ROOM_KEY = 'mc-firebase-room';
 
 /* ===== 状態 ===== */
 let sung = {};       // { "albumId::trackIndex": true }
 let artworkCache = {}; // { albumId: imageUrl }
+let sungSync = {};   // { "albumId::trackIndex": { v: 1|-1, at: timestamp } }
+let syncUrl     = null;
+let syncRoomId  = 'default';
+let syncPollId  = null;
 
 /* ===== アートワーク取得（iTunes Search API） ===== */
 function loadArtworkCache() {
@@ -86,6 +93,22 @@ function loadState() {
 
 function saveState() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(sung));
+}
+
+function loadSyncState() {
+  try {
+    const raw = localStorage.getItem(SYNC_STATE_KEY);
+    sungSync = raw ? JSON.parse(raw) : {};
+  } catch {
+    sungSync = {};
+  }
+  for (const k of Object.keys(sung)) {
+    if (!sungSync[k]) sungSync[k] = { v: 1, at: 0 };
+  }
+}
+
+function saveSyncState() {
+  localStorage.setItem(SYNC_STATE_KEY, JSON.stringify(sungSync));
 }
 
 function trackKey(albumId, trackIndex) {
@@ -193,12 +216,17 @@ function updateAlbumProgress(card, album) {
 }
 
 function toggleTrack(key) {
+  const now = Date.now();
   if (sung[key]) {
     delete sung[key];
+    sungSync[key] = { v: -1, at: now };
   } else {
     sung[key] = true;
+    sungSync[key] = { v: 1, at: now };
   }
   saveState();
+  saveSyncState();
+  pushKeyToFirebase(key);
 }
 
 /* ===== タブ切り替え ===== */
@@ -239,8 +267,15 @@ function importData(file) {
       showModal(
         `インポートしますか？\n現在の記録は上書きされます。\n（歌唱済み: ${Object.keys(data.sung).length} 曲）`,
         () => {
+          const now = Date.now();
           sung = data.sung;
+          sungSync = {};
+          for (const k of Object.keys(sung)) {
+            sungSync[k] = { v: 1, at: now };
+          }
           saveState();
+          saveSyncState();
+          pushAllToFirebase();
           renderAlbumView();
           renderKanaView();
           updateProgress();
@@ -257,7 +292,10 @@ function importData(file) {
 function resetData() {
   showModal('すべての歌唱記録をリセットしますか？\nこの操作は取り消せません。', () => {
     sung = {};
+    sungSync = {};
     saveState();
+    saveSyncState();
+    clearFirebase();
     renderAlbumView();
     renderKanaView();
     updateProgress();
@@ -309,6 +347,169 @@ function pickRandom() {
   }
   const pick = unsung[Math.floor(Math.random() * unsung.length)];
   showModal(`🎵 ${pick.track}\n\n${pick.album.title}（${pick.album.year}年）`, null);
+}
+
+/* ===== Firebase Realtime DB 同期 ===== */
+function getFirebaseEndpoint() {
+  if (!syncUrl) return null;
+  const base = syncUrl.replace(/\/+$/, '');
+  const room = (syncRoomId || 'default').replace(/[^a-zA-Z0-9_-]/g, '_');
+  return `${base}/mc-karaoke/${room}.json`;
+}
+
+function setSyncStatus(status) {
+  const dot = document.getElementById('sync-dot');
+  if (dot) dot.className = 'sync-dot ' + status;
+}
+
+async function pushKeyToFirebase(key) {
+  const endpoint = getFirebaseEndpoint();
+  if (!endpoint) return;
+  try {
+    const res = await fetch(endpoint, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ [key]: sungSync[key] }),
+    });
+    setSyncStatus(res.ok ? 'ok' : 'error');
+  } catch {
+    setSyncStatus('error');
+  }
+}
+
+async function pushAllToFirebase() {
+  const endpoint = getFirebaseEndpoint();
+  if (!endpoint) return;
+  try {
+    const body = Object.keys(sungSync).length ? sungSync : null;
+    const res = await fetch(endpoint, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+    setSyncStatus(res.ok ? 'ok' : 'error');
+  } catch {
+    setSyncStatus('error');
+  }
+}
+
+async function clearFirebase() {
+  const endpoint = getFirebaseEndpoint();
+  if (!endpoint) return;
+  try {
+    await fetch(endpoint, { method: 'DELETE' });
+    setSyncStatus('ok');
+  } catch {
+    setSyncStatus('error');
+  }
+}
+
+async function pollFirebase() {
+  const endpoint = getFirebaseEndpoint();
+  if (!endpoint) return;
+  try {
+    const res = await fetch(endpoint);
+    if (!res.ok) { setSyncStatus('error'); return; }
+    const remote = await res.json();
+    if (!remote) { setSyncStatus('ok'); return; }
+
+    const changedKeys = [];
+    for (const [key, remoteEntry] of Object.entries(remote)) {
+      const local = sungSync[key];
+      if (!local || remoteEntry.at > local.at) {
+        const wasSung = !!sung[key];
+        sungSync[key] = remoteEntry;
+        if (remoteEntry.v === 1) { sung[key] = true; }
+        else { delete sung[key]; }
+        if (wasSung !== !!sung[key]) changedKeys.push(key);
+      }
+    }
+
+    if (changedKeys.length) {
+      saveState();
+      saveSyncState();
+      changedKeys.forEach(key => {
+        const isSung = !!sung[key];
+        const trackEl = document.querySelector(`#view-album .track-item[data-key="${key}"]`);
+        if (trackEl) {
+          trackEl.classList.toggle('sung', isSung);
+          trackEl.querySelector('.track-check').textContent = isSung ? '✓' : '';
+        }
+        const kanaEl = document.querySelector(`#view-kana .kana-track-item[data-key="${key}"]`);
+        if (kanaEl) {
+          kanaEl.classList.toggle('sung', isSung);
+          kanaEl.querySelector('.kana-track-check').textContent = isSung ? '✓' : '';
+        }
+      });
+      const albumIds = new Set(changedKeys.map(k => k.split('::')[0]));
+      albumIds.forEach(albumId => {
+        const album = ALBUMS.find(a => a.id === albumId);
+        const card = document.querySelector(`.album-card[data-album-id="${albumId}"]`);
+        if (album && card) updateAlbumProgress(card, album);
+      });
+      updateProgress();
+    }
+    setSyncStatus('ok');
+  } catch {
+    setSyncStatus('error');
+  }
+}
+
+function startSync(url, room) {
+  stopSync();
+  syncUrl    = url.trim();
+  syncRoomId = (room || 'default').trim() || 'default';
+  localStorage.setItem(FIREBASE_URL_KEY, syncUrl);
+  localStorage.setItem(FIREBASE_ROOM_KEY, syncRoomId);
+  setSyncStatus('ok');
+  pollFirebase();
+  syncPollId = setInterval(pollFirebase, 10000);
+}
+
+function stopSync() {
+  if (syncPollId) { clearInterval(syncPollId); syncPollId = null; }
+  syncUrl = null;
+  setSyncStatus('off');
+}
+
+function initSyncFromStorage() {
+  const url = localStorage.getItem(FIREBASE_URL_KEY);
+  if (url) startSync(url, localStorage.getItem(FIREBASE_ROOM_KEY) || 'default');
+}
+
+function initSyncModal() {
+  const overlay    = document.getElementById('sync-modal');
+  const inputUrl   = document.getElementById('sync-url');
+  const inputRoom  = document.getElementById('sync-room');
+  const btnClose   = document.getElementById('sync-modal-close');
+  const btnConnect = document.getElementById('sync-modal-connect');
+  const btnDisconnect = document.getElementById('sync-modal-disconnect');
+
+  const openModal = () => {
+    inputUrl.value  = localStorage.getItem(FIREBASE_URL_KEY) || '';
+    inputRoom.value = localStorage.getItem(FIREBASE_ROOM_KEY) || '';
+    btnDisconnect.style.display = syncUrl ? '' : 'none';
+    overlay.hidden = false;
+  };
+  const closeModal = () => { overlay.hidden = true; };
+
+  document.getElementById('btn-sync-settings').addEventListener('click', openModal);
+  btnClose.addEventListener('click', closeModal);
+  overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(); });
+
+  btnConnect.addEventListener('click', () => {
+    const url = inputUrl.value.trim();
+    if (!url) { inputUrl.focus(); return; }
+    startSync(url, inputRoom.value);
+    closeModal();
+  });
+
+  btnDisconnect.addEventListener('click', () => {
+    stopSync();
+    localStorage.removeItem(FIREBASE_URL_KEY);
+    localStorage.removeItem(FIREBASE_ROOM_KEY);
+    closeModal();
+  });
 }
 
 /* ===== フッターボタン初期化 ===== */
@@ -459,10 +660,13 @@ function syncAlbumViewItem(key, isSung) {
 /* ===== 起動 ===== */
 document.addEventListener('DOMContentLoaded', () => {
   loadState();
+  loadSyncState();
   initTabs();
   initFooter();
+  initSyncModal();
   renderAlbumView();
   renderKanaView();
   updateProgress();
   loadAllArtwork();
+  initSyncFromStorage();
 });

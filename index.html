@@ -18,6 +18,9 @@
         <p class="header-sub">歌唱トラッカー</p>
       </div>
     </div>
+    <button class="sync-status-btn" id="btn-sync-settings" title="同期設定">
+      <span class="sync-dot" id="sync-dot"></span>
+    </button>
     <div class="header-progress">
       <span id="progress-text">0 / 0</span>
       <div class="progress-bar-wrap">
@@ -65,6 +68,27 @@
       <div class="modal-btns">
         <button class="modal-btn" id="modal-cancel">キャンセル</button>
         <button class="modal-btn primary" id="modal-confirm">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 同期設定モーダル -->
+  <div class="modal-overlay" id="sync-modal" hidden>
+    <div class="modal">
+      <p class="sync-modal-title">同期設定</p>
+      <p class="sync-modal-desc">Firebase Realtime Database を使って複数デバイスでリアルタイム同期します。Firebase コンソールでプロジェクトを作成し、Realtime Database をテストモードで開始してください。</p>
+      <div class="sync-field">
+        <span>データベース URL</span>
+        <input type="url" id="sync-url" placeholder="https://xxx-default-rtdb.firebaseio.com" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+      </div>
+      <div class="sync-field">
+        <span>ルーム名（グループを分ける場合）</span>
+        <input type="text" id="sync-room" placeholder="default" autocomplete="off">
+      </div>
+      <div class="modal-btns">
+        <button class="modal-btn" id="sync-modal-close">閉じる</button>
+        <button class="modal-btn danger" id="sync-modal-disconnect">切断</button>
+        <button class="modal-btn primary" id="sync-modal-connect">接続</button>
       </div>
     </div>
   </div>

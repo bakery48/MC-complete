@@ -108,6 +108,30 @@ body {
   transition: width 0.3s ease;
 }
 
+/* ===== 同期ドット ===== */
+.sync-status-btn {
+  background: none;
+  border: none;
+  padding: 8px;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.sync-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--border);
+  display: block;
+  transition: background 0.3s;
+}
+
+.sync-dot.ok    { background: var(--sung); }
+.sync-dot.error { background: var(--danger); }
+
 /* ===== タブナビ ===== */
 .tab-nav {
   position: sticky;
@@ -537,4 +561,47 @@ body {
   background: var(--accent);
   border-color: var(--accent);
   color: #fff;
+}
+
+/* ===== 同期設定モーダル ===== */
+.sync-modal-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--accent-light);
+  margin-bottom: 8px;
+}
+
+.sync-modal-desc {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+  margin-bottom: 16px;
+}
+
+.sync-field {
+  margin-bottom: 12px;
+}
+
+.sync-field > span {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+
+.sync-field input {
+  width: 100%;
+  padding: 10px 12px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  font-size: 0.85rem;
+  font-family: inherit;
+  -webkit-appearance: none;
+}
+
+.sync-field input:focus {
+  outline: none;
+  border-color: var(--accent);
 }
