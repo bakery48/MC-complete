@@ -462,8 +462,25 @@ function startSync(url, room) {
   localStorage.setItem(FIREBASE_URL_KEY, syncUrl);
   localStorage.setItem(FIREBASE_ROOM_KEY, syncRoomId);
   setSyncStatus('ok');
-  pollFirebase();
+  initialSync();
   syncPollId = setInterval(pollFirebase, 10000);
+}
+
+async function initialSync() {
+  await pollFirebase();
+  if (!syncUrl || !Object.keys(sungSync).length) return;
+  const endpoint = getFirebaseEndpoint();
+  if (!endpoint) return;
+  try {
+    await fetch(endpoint, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(sungSync),
+    });
+    setSyncStatus('ok');
+  } catch {
+    setSyncStatus('error');
+  }
 }
 
 function stopSync() {
